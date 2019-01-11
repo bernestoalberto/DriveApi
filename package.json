@@ -1,0 +1,23 @@
+{
+  "name": "driveserv",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "driveserv"
+  },
+  "keywords": [
+    "drive"
+  ],
+  "author": "bernestoalberto",
+  "license": "ISC",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "googleapis": "^27.0.0",
+    "nodemon": "^1.18.9"
+  }
+}
