@@ -17,6 +17,7 @@
   "license": "ISC",
   "dependencies": {
     "fs": "0.0.1-security",
+    "fs-extra": "^7.0.1",
     "googleapis": "^27.0.0",
     "nodemon": "^1.18.9"
   }
