@@ -14,10 +14,10 @@ const TOKEN_PATH = 'token.json';
 fs.readFile('credentials.json', (err, content) => {
   if (err) return console.log('Error loading client secret file:', err);
   // Authorize a client with credentials, then call the Google Drive API.
-  authorize(JSON.parse(content), listFiles);
+  // authorize(JSON.parse(content), listFiles);
   authorize(JSON.parse(content), downloaderPdf);
   // authorize(JSON.parse(content), uploader);
-  authorize(JSON.parse(content), downloader);
+  // authorize(JSON.parse(content), downloader);
 });
 
 /**
