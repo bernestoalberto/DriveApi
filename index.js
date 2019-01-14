@@ -1,23 +1,61 @@
-const fs = require('fs-extra');
+const fs = require('fs');
+const fse = require('fs-extra');
 const readline = require('readline');
-const {google} = require('googleapis');
-
-// If modifying these scopes, delete token.json.
-const SCOPES = ['https://www.googleapis.com/auth/drive.readonly',
- 'https://www.googleapis.com/auth/drive.metadata.readonly'];
 // The file token.json stores the user's access and refresh tokens, and is
+const pathExists = require('path-exists');
+
+const {google} = require('googleapis');
+// If modifying these scopes, delete token.json.
+const SCOPES = ['https://www.googleapis.com/auth/drive'];
 // created automatically when the authorization flow completes for the first
+
 // time.
 const TOKEN_PATH = 'token.json';
+function pathExist() {
+  pathExists('foo.js').then(exists => {
+    if (!exists) {
+      let param =
+          `<!DOCTYPE html>
+<html>
+<head>
+
+</style>
+</head>
+<body>
+
+    <div style='
+    background-image: url('http://127.0.0.1/thcmanager/sourcecode/modules/results/florida.jpg');
+    background-attachment: fixed;
+    height:80px;
+    background-position: right;
+    background-repeat: no-repeat;
+    background-size: cover;
+'></div>
+</body>
+</html>
+`;
+      fse.writeFile(`tmp/report.html`, param, (err) => {
+        if (err) {
+          console.error(err);
+        }
+      });
+    }
+  });
+}
+
+
 
 // Load client secrets from a local file.
 fs.readFile('credentials.json', (err, content) => {
   if (err) return console.log('Error loading client secret file:', err);
   // Authorize a client with credentials, then call the Google Drive API.
-  // authorize(JSON.parse(content), listFiles);
-  authorize(JSON.parse(content), downloaderPdf);
+   authorize(JSON.parse(content), listFiles);
   // authorize(JSON.parse(content), uploader);
+  pathExist();
+  authorize(JSON.parse(content), InsertingFileFolder);
+  // authorize(JSON.parse(content), createFolder);
   // authorize(JSON.parse(content), downloader);
+ // authorize(JSON.parse(content), downloaderPdf);
 });
 
 /**
@@ -94,8 +132,8 @@ function getAccessToken(oAuth2Client, callback) {
 }
  function downloader(auth) {
   const drive = google.drive({version: 'v3', auth});
-  var fileId = '1jHopEYD18z2QVVzdTmzwIqKqN0ZZoW7P';
-  var dest = fs.writeFile('/tmp/photo.jpg');
+  var fileId = '1IA7IRcTlsLuvAtlkPAGIcWvuBbM3592u';
+  var dest = fs.createWriteStream('tmp/report.html');
   drive.files.get({
     fileId: fileId,
     alt: 'media'
@@ -111,11 +149,12 @@ function getAccessToken(oAuth2Client, callback) {
 function uploader(auth) {
   const drive = google.drive({version: 'v3', auth});
   var fileMetadata = {
-      'name': 'photo.jpg'
+      'name': `report.html`
     };
-    var media = {
-      mimeType: 'image/jpeg',
-      body: fs.writeFile(`./tmp/${getDate()}.jpg`)
+  console.info(`Attempting to upload the  ${fileMetadata.name}`);
+  var media = {
+      mimeType: 'text/html',
+      body: fs.createReadStream(`tmp/report.html`)
     };
     drive.files.create({
       resource: fileMetadata,
@@ -126,15 +165,19 @@ function uploader(auth) {
         // Handle error
         console.error(err);
       } else {
-        console.log('File Id: ', file.id);
+        console.log('File Id: ', file.data.id);
+/*        fs.unlink('./tmp/report.html',function(err){
+          if(err) return console.log(err);
+          console.log('file deleted successfully');
+        });*/
       }
     });
   }
 function downloaderPdf(auth){
   const drive = google.drive({version: 'v3', auth});
-    var fileId = '1t-BAP4ES1ADH-5A3-ayy2SKVz26ZEKfN';
+    var fileId = '1IA7IRcTlsLuvAtlkPAGIcWvuBbM3592u';
     var d = new Date();
-var dest = fs.createWriteStream(`/tmp/${d}.pdf`);
+var dest = fs.createWriteStream(`tmp/report.pdf`);
 drive.files.export({
   fileId: fileId,
   mimeType: 'application/pdf'
@@ -150,7 +193,7 @@ drive.files.export({
 function createFolder(auth){
   const drive = google.drive({version: 'v3', auth});
   var fileMetadata = {
-    'name': 'Invoices',
+    'name': 'thcReports',
     'mimeType': 'application/vnd.google-apps.folder'
   };
   drive.files.create({
@@ -161,20 +204,21 @@ function createFolder(auth){
       // Handle error
       console.error(err);
     } else {
-      console.log('Folder Id: ', file.id);
+      console.log('Folder Id: ', file.data.id);
     }
   });
 }
+
 function InsertingFileFolder(auth){
   const drive = google.drive({version: 'v3', auth});
-  var folderId = '0BwwA4oUTeiV1TGRPeTVjaWRDY1E';
+  var folderId = '1urRMEv8aZieF0gm8wIVMBFtliIxLNl3k';
   var fileMetadata = {
-    'name': 'photo.jpg',
+    'name': 'report.html',
     parents: [folderId]
   };
   var media = {
-    mimeType: 'image/jpeg',
-    body: fs.createReadStream('files/photo.jpg')
+    mimeType: 'text/html',
+    body: fs.createReadStream('tmp/report.html')
   };
   drive.files.create({
     resource: fileMetadata,
@@ -185,14 +229,14 @@ function InsertingFileFolder(auth){
       // Handle error
       console.error(err);
     } else {
-      console.log('File Id: ', file.id);
+      console.log('File Id: ', file.data.id);
     }
   });
 }
 function moveFilesBetweenFolders(auth){
   const drive = google.drive({version: 'v3', auth});
-  fileId = '1sTWaJ_j7PkjzaBWtNc3IzovK5hQf21FbOw9yLeeLPNQ'
-  folderId = '0BwwA4oUTeiV1TGRPeTVjaWRDY1E'
+  fileId = '1sTWaJ_j7PkjzaBWtNc3IzovK5hQf21FbOw9yLeeLPNQ';
+  folderId = '1urRMEv8aZieF0gm8wIVMBFtliIxLNl3k';
   // Retrieve the existing parents to remove
   drive.files.get({
     fileId: fileId,
