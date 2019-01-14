@@ -12,7 +12,7 @@ const SCOPES = ['https://www.googleapis.com/auth/drive'];
 // time.
 const TOKEN_PATH = 'token.json';
 function pathExist() {
-  pathExists('foo.js').then(exists => {
+  pathExists('tmp/report.html').then(exists => {
     if (!exists) {
       let param =
           `<!DOCTYPE html>
